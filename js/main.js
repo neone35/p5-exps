@@ -48,25 +48,34 @@ function setup() {
 }
 
 function mouseMoved() {
-    pieces = pieces + 7;
-    radius = radius + 1;
-    console.log("mouseX: " + mouseX);
+    // pieces = pieces + 7;
+    // radius = radius + 1;
+    
     var xCenter = width / 2;
     var yCenter = height / 2;
     translate(mouseX - xCenter, 0);
 
-    if (mouseX < xCenter)
-        background(colorPalette[0]);
-    else 
-        background(colorPalette[2]);
+    console.log("xCenter: " + xCenter);
+    console.log("mouseX: " + mouseX);
+    console.log("mouseX / xCenter * 1.25: " + mouseX / xCenter * 1.25);
+    
+    // changes radius on mouse move in/out center
+    radius = radius * (mouseX / xCenter * 1.25);
 
-    if (mouseY < yCenter)
-        background(colorPalette[1]);
-    else
-        background(colorPalette[3]);
+    // if (mouseX < xCenter)
+    //     background(colorPalette[0]);
+    // else 
+    //     background(colorPalette[2]);
+
+    // if (mouseY < yCenter)
+    //     background(colorPalette[1]);
+    // else
+    //     background(colorPalette[3]);
 }
 
 function draw() {
+
+    background(colorPalette[0]);
 
     var startXAt = width / 5;
     var startYAt = height / 5;
@@ -82,8 +91,9 @@ function draw() {
 
     fft.analyze();
     var bass = fft.getEnergy("bass");
-    var treble = fft.getEnergy(100, 150);
+    var treble = fft.getEnergy("treble");
     var mid = fft.getEnergy("mid");
+    var custom = fft.getEnergy(100, 500);
 
     var mapbass = map(bass, 0, 255, -100, 800);
     var scalebass = map(bass, 0, 255, 0.5, 1.2);
@@ -106,25 +116,15 @@ function draw() {
 
     translate(width / 2, height / 2);
 
-    for (i = 0; i < pieces; i += 0.01) {
+    for (i = 0; i < pieces; i += 0.02) {
 
         rotate(TWO_PI / pieces);
 
-        /*----------  BASS  ----------*/
-        push();
-        strokeWeight(1);
-        stroke(colorPalette[1]);
-        scale(scalebass);
-        rotate(frameCount * -0.5);
-        line(mapbass, radius / 2, radius, radius);
-        line(-mapbass, -radius / 2, radius, radius);
-        pop();
-
-
         /*----------  MID  ----------*/
         push();
-        strokeWeight(1);
+        strokeWeight(2);
         stroke(colorPalette[2]);
+        // scale(scaleMid);
         line(mapMid, radius, radius * 2, radius * 2);
         pop();
 
@@ -134,6 +134,22 @@ function draw() {
         stroke(colorPalette[3]);
         scale(scaleTreble);
         line(mapTreble, radius / 2, radius, radius);
+        pop();
+
+    }
+
+    for (i = 0; i < pieces; i += 0.05) {
+
+        rotate(TWO_PI / pieces);
+
+        /*----------  BASS  ----------*/
+        push();
+        strokeWeight(3);
+        stroke(colorPalette[1]);
+        scale(scalebass);
+        rotate(frameCount * -0.5);
+        line(mapbass, radius / 2, radius, radius);
+        line(-mapbass, -radius / 2, radius, radius);
         pop();
 
     }
